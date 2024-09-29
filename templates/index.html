@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>微服务示例</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input[type="text"], input[type="number"] {
+            padding: 8px;
+            margin: 5px 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        input[type="submit"] {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+     button {
+        padding: 8px 12px;
+        background-color: #f44336; /* 红色背景 */
+        color: white; /* 白色文字 */
+        border: none; /* 去掉边框 */
+        border-radius: 4px; /* 圆角 */
+        cursor: pointer; /* 鼠标悬停时显示手形光标 */
+        transition: background-color 0.3s; /* 添加过渡效果 */
+    }
+
+    button:hover {
+        background-color: #d32f2f; /* 悬停时稍微变暗 */
+    }
+
+    button:focus {
+        outline: none; /* 去掉聚焦时的边框 */
+    }
+
+    button:disabled {
+        background-color: #ccc; /* 禁用时颜色 */
+        cursor: not-allowed; /* 禁用时显示不可点击光标 */
+    }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>微服务系统</h1>
+
+    <h2>创建用户</h2>
+    <form id="user-form">
+        <input type="text" id="user-name" placeholder="用户名称" required>
+        <input type="submit" value="创建用户">
+    </form>
+
+    <h2>创建订单</h2>
+    <form id="order-form">
+        <input type="text" id="order-item" placeholder="订单项" required>
+        <input type="number" id="order-price" placeholder="订单价格" required>
+        <input type="submit" value="创建订单">
+    </form>
+    <h2>用户列表</h2>
+    <table id="user-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>名称</th>
+                <th>操作</th> <!-- 新增操作列 -->
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    
+    <h2>订单列表</h2>
+    <table id="order-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>订单项</th>
+                <th>价格</th>
+                <th>操作</th> <!-- 新增操作列 -->
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+</div>
+
+<script>
+// 获取用户数据
+function loadUsers() {
+    fetch('/users')
+        .then(response => response.json())
+        .then(data => {
+            const userTable = document.querySelector("#user-table tbody");
+            userTable.innerHTML = '';
+            data.forEach(user => {
+                userTable.innerHTML += `<tr><td>${user.id}</td><td>${user.name}</td></tr>`;
+            });
+        });
+}
+
+// 获取订单数据
+function loadOrders() {
+    fetch('/orders')
+        .then(response => response.json())
+        .then(data => {
+            const orderTable = document.querySelector("#order-table tbody");
+            orderTable.innerHTML = '';
+            data.forEach(order => {
+                orderTable.innerHTML += `<tr><td>${order.id}</td><td>${order.item}</td><td>${order.price}</td></tr>`;
+            });
+        });
+}
+
+// 提交用户表单
+document.getElementById("user-form").addEventListener("submit", function(event) {
+    event.preventDefault();
+    const userName = document.getElementById("user-name").value;
+
+    fetch('/users', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name: userName }),
+    }).then(response => {
+        if (response.ok) {
+            loadUsers();
+            document.getElementById("user-form").reset();
+        }
+    });
+});
+
+// 提交订单表单
+document.getElementById("order-form").addEventListener("submit", function(event) {
+    event.preventDefault();
+    const orderItem = document.getElementById("order-item").value;
+    const orderPrice = document.getElementById("order-price").value;
+
+    fetch('/orders', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ item: orderItem, price: orderPrice }),
+    }).then(response => {
+        if (response.ok) {
+            loadOrders();
+            document.getElementById("order-form").reset();
+        }
+    });
+});
+
+// 获取用户数据
+function loadUsers() {
+    fetch('/users')
+        .then(response => response.json())
+        .then(data => {
+            const userTable = document.querySelector("#user-table tbody");
+            userTable.innerHTML = '';
+            data.forEach(user => {
+                userTable.innerHTML += `<tr>
+                    <td>${user.id}</td>
+                    <td>${user.name}</td>
+                    <td><button onclick="deleteUser(${user.id})">删除</button></td> <!-- 添加删除按钮 -->
+                </tr>`;
+            });
+        });
+}
+
+// 获取订单数据
+function loadOrders() {
+    fetch('/orders')
+        .then(response => response.json())
+        .then(data => {
+            const orderTable = document.querySelector("#order-table tbody");
+            orderTable.innerHTML = '';
+            data.forEach(order => {
+                orderTable.innerHTML += `<tr>
+                    <td>${order.id}</td>
+                    <td>${order.item}</td>
+                    <td>${order.price}</td>
+                    <td><button onclick="deleteOrder(${order.id})">删除</button></td> <!-- 添加删除按钮 -->
+                </tr>`;
+            });
+        });
+}
+
+// 删除用户
+function deleteUser(userId) {
+    fetch(`/users/${userId}`, {
+        method: 'DELETE'
+    }).then(response => {
+        if (response.ok) {
+            loadUsers(); // 刷新用户列表
+        }
+    });
+}
+
+// 删除订单
+function deleteOrder(orderId) {
+    fetch(`/orders/${orderId}`, {
+        method: 'DELETE'
+    }).then(response => {
+        if (response.ok) {
+            loadOrders(); // 刷新订单列表
+        }
+    });
+}
+
+// 页面加载时初始化数据
+window.onload = function() {
+    loadUsers();
+    loadOrders();
+};
+</script>
+
+</body>
+</html>
