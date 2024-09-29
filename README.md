@@ -56,8 +56,8 @@ nohup python3 api_gateway.py &
 
 ###### UI
 
-[images/image-20240929165529989.png](https://github.com/aiici/Microservice-Demo/blob/main/images/image-20240929165529989.png)
+![image](https://github.com/aiici/Microservice-Demo/blob/main/images/image-20240929165529989.png)
 
 ###### consul
 
-[images/image-20240929165606409.png](https://github.com/aiici/Microservice-Demo/blob/main/images/image-20240929165606409.png)
+![image](https://github.com/aiici/Microservice-Demo/blob/main/images/image-20240929165606409.png)
