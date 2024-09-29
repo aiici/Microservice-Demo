@@ -56,8 +56,8 @@ nohup python3 api_gateway.py &
 
 ###### UI
 
-![image-20240929165529989](F:\Microservice Demo\images\image-20240929165529989.png)
+images\image-20240929165529989.png)
 
 ###### consul
 
-![image-20240929165606409](F:\Microservice Demo\images\image-20240929165606409.png)
+\images\image-20240929165606409.png)
